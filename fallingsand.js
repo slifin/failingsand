@@ -22,21 +22,12 @@ if (Meteor.isServer) {
       return atom.find();
     });
 
-    Future = Npm.require('fibers/future');
 
 
     Meteor.setInterval(function(){
-      falling = atom.find({y:{$lt:490},settled:0});
+    
 
-      falling.forEach(function(row){
-        if (atom.find({
-          x:{$gt:row.x-pixel,$lt:row.x+pixel},
-          y:{$gt:row.y-1,$lt:row.y+pixel}
-        }).count() ===1)
-          atom.update(row._id,{$inc:{'y':1}});
-          else
-            atom.update(row._id,{$set: {settled:1}});
-        });
+     
     },100);
   });
 }

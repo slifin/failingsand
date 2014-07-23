@@ -56,7 +56,25 @@ drawUniverse = function(){
 			}
 		});
 	});
-}
+};
+
+var applyGravity = function applyGravity(){
+	falling = atom.find({y:{$lt:490}});
+	falling.forEach(function(row){
+		if (atom.find({
+			x:{$gt:row.x-pixel,$lt:row.x+pixel},
+			y:{$gt:row.y-1,$lt:row.y+pixel}
+		}).count() ===1)
+			atom.update(row._id,{$inc:{'y':1}});
+			else
+				atom.update(row._id,{$set: {settled:1}});
+		});
+	requestAnimationFrame(applyGravity);
+};
+Meteor.startup(function(){
+	window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+	requestAnimationFrame(applyGravity);
+});  
 
 Template.sand.events({
 	'mousedown canvas' : function (e) {
