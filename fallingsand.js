@@ -22,12 +22,5 @@ if (Meteor.isServer) {
       return atom.find();
     });
 
-
-
-    Meteor.setInterval(function(){
-    
-
-     
-    },100);
   });
 }
