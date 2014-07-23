@@ -33,7 +33,6 @@ function rightClick(){
 	point.forEach(function(row){
 		atom.remove(row._id); 
 	});
-	unSettle();
 }
 
 drawUniverse = function(){
