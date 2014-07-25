@@ -25,16 +25,12 @@ function rightClick(){
 		x:{$gt:coords.x-pixel,$lt:coords.x+pixel},
 		y:{$gt:coords.y-pixel,$lt:coords.y+pixel}
 	});
-	point = atom.find();
-	point.forEach(function(row){
-		atom.remove(row._id); 
-	});
+	Meteor.call('removeAtoms'); 
 }
 
 drawUniverse = function(){
 	Meteor.subscribe('atoms',function(){
 		var cursor = atom.find();
-
 		cursor.map(function(row){
 			ctx.fillRect(row.x,row.y,pixel,pixel);
 		});
@@ -60,16 +56,16 @@ var applyGravity = function applyGravity(){
 		if (universe.find({
 			x:{$gt:row.x-pixel,$lt:row.x+pixel},
 			y:{$gt:row.y-1,$lt:row.y+pixel}
-		}).count() === 1)
-			universe.update(row._id,{$inc: {y:2}});
+		}).count() === 1 )
+				universe.update(row._id,{$inc: {y:2}});
 			else
-				atom.update(row._id,{$set: {settled:1},x:row.x,y:row.y});
+				atom.update(row._id,{$set: {settled:1,x:row.x,y:row.y}});
 		});
 	requestAnimationFrame(applyGravity);
 };
 Meteor.startup(function(){
 	Meteor.subscribe('atoms',function(){
-		universe = new Meteor.Collection();
+		universe = new Meteor.Collection(null);
 		existence = universe.find()
 		existence.observe({
 			added:function(row){

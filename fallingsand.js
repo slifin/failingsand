@@ -21,6 +21,11 @@ if (Meteor.isServer) {
     Meteor.publish('atoms',function(){
       return atom.find();
     });
+    Meteor.methods({
+      removeAtoms: function(){
+        return atom.remove({});
+      }
+    })
 
   });
 }
