@@ -5,13 +5,11 @@ function getCoords(evt){
 		y: evt.clientY - rect.top
 	};
 }
-
 function unSettle(){
 	atom.find().forEach(function(row){
 		atom.update(row._id,{$set: {settled:0}});
 	});	
 }
-
 function leftClick(){
 	atom.insert({
 		x: coords.x,
@@ -19,7 +17,6 @@ function leftClick(){
 		settled: 0
 	});
 }
-
 function rightClick(){
 	point = atom.find({
 		x:{$gt:coords.x-pixel,$lt:coords.x+pixel},
@@ -27,7 +24,6 @@ function rightClick(){
 	});
 	Meteor.call('removeAtoms'); 
 }
-
 drawUniverse = function(){
 	Meteor.subscribe('atoms',function(){
 		var cursor = atom.find();
@@ -47,8 +43,6 @@ drawUniverse = function(){
 		});
 	});
 };
-
-
 var applyGravity = function applyGravity(){
 	falling = universe.find({y:{$lt:490}, settled:0});
 	falling.forEach(function(row){
@@ -69,21 +63,23 @@ Meteor.startup(function(){
 		existence = universe.find()
 		existence.observe({
 			added:function(row){
+
 				ctx.fillRect(row.x,row.y,pixel,pixel);
+
 			},
 			removed:function(row){
 				ctx.clearRect(row.x,row.y,pixel,pixel);
 			},
 			changed:function(next,prev){
-				ctx.clearRect(prev.x,prev.y,pixel,pixel);
+				ctx.clearRect(prev.x,prev.y-1,pixel,pixel);
 				ctx.fillRect(next.x,next.y,pixel,pixel);
+
 			}
 		});
 		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 		requestAnimationFrame(applyGravity);
 	});
 });  
-
 Template.sand.events({
 	'mousedown canvas' : function (e) {
 		coords = getCoords(e);
