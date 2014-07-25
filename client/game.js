@@ -16,20 +16,16 @@ function leftClick(){
 	atom.insert({
 		x: coords.x,
 		y: coords.y,
-		hp: 1,
-		type: 0,
 		settled: 0
 	});
 }
-
-
-
 
 function rightClick(){
 	point = atom.find({
 		x:{$gt:coords.x-pixel,$lt:coords.x+pixel},
 		y:{$gt:coords.y-pixel,$lt:coords.y+pixel}
 	});
+	point = atom.find();
 	point.forEach(function(row){
 		atom.remove(row._id); 
 	});
@@ -44,35 +40,52 @@ drawUniverse = function(){
 		});
 		cursor.observe({
 			added:function(row){
-				ctx.fillRect(row.x,row.y,pixel,pixel);
+				universe.insert(row);
 			},
 			removed:function(row){
-				ctx.clearRect(row.x,row.y,pixel,pixel);
+				universe.remove(row._id);
 			},
 			changed:function(move,old){
-				ctx.clearRect(old.x,old.y,pixel,pixel);
-				ctx.fillRect(move.x,move.y,pixel,pixel);
+				universe.update(old._id,move);
 			}
 		});
 	});
 };
 
+
 var applyGravity = function applyGravity(){
-	falling = atom.find({y:{$lt:490}});
+	falling = universe.find({y:{$lt:490}, settled:0});
 	falling.forEach(function(row){
-		if (atom.find({
+		// if (searchSpaceBelow(row.x,row.y) ===0)
+		if (universe.find({
 			x:{$gt:row.x-pixel,$lt:row.x+pixel},
 			y:{$gt:row.y-1,$lt:row.y+pixel}
-		}).count() ===1)
-			atom.update(row._id,{$inc:{'y':1}});
+		}).count() === 1)
+			universe.update(row._id,{$inc: {y:2}});
 			else
-				atom.update(row._id,{$set: {settled:1}});
+				atom.update(row._id,{$set: {settled:1},x:row.x,y:row.y});
 		});
 	requestAnimationFrame(applyGravity);
 };
 Meteor.startup(function(){
-	window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-	requestAnimationFrame(applyGravity);
+	Meteor.subscribe('atoms',function(){
+		universe = new Meteor.Collection();
+		existence = universe.find()
+		existence.observe({
+			added:function(row){
+				ctx.fillRect(row.x,row.y,pixel,pixel);
+			},
+			removed:function(row){
+				ctx.clearRect(row.x,row.y,pixel,pixel);
+			},
+			changed:function(next,prev){
+				ctx.clearRect(prev.x,prev.y,pixel,pixel);
+				ctx.fillRect(next.x,next.y,pixel,pixel);
+			}
+		});
+		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+		requestAnimationFrame(applyGravity);
+	});
 });  
 
 Template.sand.events({
