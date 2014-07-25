@@ -68,7 +68,7 @@ Meteor.startup(function(){
 				ctx.fillRect(row.x,row.y,pixel,pixel);
 			},
 			removed:function(row){
-				ctx.clearRect(row.x,row.y,pixel,pixel);
+				ctx.clearRect(row.x,row.y-1,pixel+2,pixel+2);
 			},
 			changed:function(next,prev){
 				ctx.clearRect(prev.x,prev.y-1,pixel,pixel);
