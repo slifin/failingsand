@@ -1,4 +1,4 @@
 Meteor.methods 
 	removeAtoms: ->
-		atom.remove({})
+		atoms.remove({})
 
