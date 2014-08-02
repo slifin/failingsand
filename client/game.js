@@ -6,19 +6,19 @@ function getCoords(evt){
 	};
 }
 function unSettle(){
-	atom.find().forEach(function(row){
-		atom.update(row._id,{$set: {settled:0}});
+	atoms.find().forEach(function(row){
+		atoms.update(row._id,{$set: {settled:0}});
 	});	
 }
 function leftClick(){
-	atom.insert({
+	atoms.insert({
 		x: coords.x,
 		y: coords.y,
 		settled: 0
 	});
 }
 function rightClick(){
-	point = atom.find({
+	point = atoms.find({
 		x:{$gt:coords.x-pixel,$lt:coords.x+pixel},
 		y:{$gt:coords.y-pixel,$lt:coords.y+pixel}
 	});
@@ -26,7 +26,7 @@ function rightClick(){
 }
 drawUniverse = function(){
 	Meteor.subscribe('atoms',function(){
-		var cursor = atom.find();
+		var cursor = atoms.find();
 		cursor.map(function(row){
 			ctx.fillRect(row.x,row.y,pixel,pixel);
 		});
@@ -53,9 +53,9 @@ var applyGravity = function applyGravity(){
 			if (row.y < 488) 
 				universe.update(row._id,{$inc: {y:2}});
 			else //settle things that hit the floor
-				atom.update(row._id,{$set: {settled:1,x:row.x,y:row.y}});
+				atoms.update(row._id,{$set: {settled:1,x:row.x,y:row.y}});
 			else //settled on another atom
-				atom.update(row._id,{$set: {settled:1,x:row.x,y:row.y}});
+				atoms.update(row._id,{$set: {settled:1,x:row.x,y:row.y}});
 		});
 	requestAnimationFrame(applyGravity);
 };
