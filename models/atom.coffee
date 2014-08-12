@@ -1,5 +1,10 @@
 class atom extends Model
-	create: ->
+	create: (x,y)->
+		atoms.insert
+			x: coords.x,
+			y: coords.y,
+			settled: 0
+		
 
 	remove:->
 

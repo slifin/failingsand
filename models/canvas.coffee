@@ -21,8 +21,7 @@ class canvas
 
 
 
-
 if (Meteor.isClient)
 	Meteor.startup ->
-		new canvas
+		@scene = new canvas
 	
